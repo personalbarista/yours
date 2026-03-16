@@ -62,7 +62,7 @@
         }
 
         /* ============================================
-           EDIT MODE TOGGLE
+           EDIT MODE TOGGLE - DESKTOP ONLY
            ============================================ */
         .edit-toggle {
             position: fixed;
@@ -96,6 +96,13 @@
         @keyframes pulse {
             0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
             50% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+        }
+
+        /* Hide edit button on mobile */
+        @media (max-width: 1024px) {
+            .edit-toggle {
+                display: none !important;
+            }
         }
 
         /* ============================================
@@ -218,6 +225,14 @@
 
         .notes-toggle:hover {
             transform: scale(1.1) rotate(10deg);
+        }
+
+        /* On mobile, move notes toggle to top right since edit button is hidden */
+        @media (max-width: 1024px) {
+            .notes-toggle {
+                top: 20px;
+                right: 20px;
+            }
         }
 
         .add-note-btn {
@@ -544,48 +559,15 @@
         }
 
         /* ============================================
-           GALLERY SECTION WITH UPLOAD
+           GALLERY SECTION - WITH YOUR PHOTOS
            ============================================ */
         .gallery-section {
             margin: var(--section-padding) 0;
         }
 
-        .upload-area {
-            border: 3px dashed var(--primary-light);
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            margin-bottom: 30px;
-            background: rgba(255, 255, 255, 0.5);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .upload-area:hover, .upload-area.dragover {
-            border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.8);
-            transform: scale(1.02);
-        }
-
-        .upload-area p {
-            color: var(--primary-dark);
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-
-        .upload-area small {
-            color: var(--text-light);
-            font-size: 0.9rem;
-        }
-
-        #fileInput {
-            display: none;
-        }
-
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.5rem;
             margin-top: 3rem;
         }
@@ -651,44 +633,6 @@
 
         .gallery-item:hover .gallery-caption {
             transform: translateY(0);
-        }
-
-        .delete-photo {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2rem;
-            opacity: 0;
-            transition: all 0.3s;
-            color: var(--primary);
-            z-index: 10;
-        }
-
-        .gallery-item:hover .delete-photo {
-            opacity: 1;
-        }
-
-        .delete-photo:hover {
-            transform: scale(1.1);
-            background: white;
-        }
-
-        .empty-gallery {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-light);
-            font-size: 1.1rem;
-            grid-column: 1 / -1;
-        }
-
-        .empty-gallery p {
-            margin-bottom: 10px;
         }
 
         /* ============================================
@@ -1037,7 +981,7 @@
             }
 
             .gallery-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: 1fr;
                 gap: 1rem;
             }
 
@@ -1053,14 +997,9 @@
                 padding: 2rem 1.5rem;
             }
 
-            .edit-toggle {
-                padding: 10px 16px;
-                font-size: 0.9rem;
-                top: 80px;
-            }
-
             .notes-toggle {
-                top: 80px;
+                top: 20px;
+                right: 20px;
             }
         }
 
@@ -1087,7 +1026,7 @@
     <!-- Floating Hearts -->
     <div class="hearts-container" id="heartsContainer"></div>
 
-    <!-- Edit Mode Toggle -->
+    <!-- Edit Mode Toggle - DESKTOP ONLY (hidden on mobile) -->
     <button class="edit-toggle" id="editToggle" onclick="toggleEditMode()">
         <span>✏️</span>
         <span id="editText">Enable Edit Mode</span>
@@ -1139,24 +1078,15 @@
             </div>
         </section>
 
-        <!-- Gallery Section with Upload -->
+        <!-- Gallery Section - WITH YOUR 3 PHOTOS -->
         <section class="gallery-section" id="gallery-section">
             <div class="section-header">
                 <div class="section-label">Memories</div>
                 <h2 class="section-title editable" data-key="galleryTitle">Our Beautiful Moments</h2>
             </div>
 
-            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-                <p>📸 Click or Drag & Drop Photos Here</p>
-                <small>Upload your favorite memories together</small>
-            </div>
-            <input type="file" id="fileInput" multiple accept="image/*" onchange="handleFiles(this.files)">
-
             <div class="gallery-grid" id="galleryGrid">
-                <div class="empty-gallery" id="emptyState">
-                    <p>No photos yet 💕</p>
-                    <p>Upload your first memory above!</p>
-                </div>
+                <!-- Photos will be loaded here -->
             </div>
         </section>
 
@@ -1216,6 +1146,24 @@
            CONFIGURATION - START DATE: January 1, 2026
            ============================================ */
         const START_DATE = '2026-01-01';
+
+        /* ============================================
+           YOUR PHOTOS - PRE-LOADED
+           ============================================ */
+        const YOUR_PHOTOS = [
+            {
+                src: 'https://i.ibb.co/pv50Zht6/Whats-App-Image-2026-03-16-at-6-19-41-PM.jpg',
+                caption: 'Precious Memory #1'
+            },
+            {
+                src: 'https://i.ibb.co/ksY7VKqL/Whats-App-Image-2026-03-16-at-6-21-49-PM-1.jpg',
+                caption: 'Precious Memory #2'
+            },
+            {
+                src: 'https://i.ibb.co/bMTz9SLX/Whats-App-Image-2026-03-16-at-6-21-49-PM.jpg',
+                caption: 'Precious Memory #3'
+            }
+        ];
 
         // Default content (editable)
         const DEFAULT_CONTENT = {
@@ -1282,9 +1230,11 @@
            STATE MANAGEMENT
            ============================================ */
         let editMode = false;
-        let photos = JSON.parse(localStorage.getItem('lovePhotos') || '[]');
-        let notes = JSON.parse(localStorage.getItem('loveNotes') || '[]');
+        let notes = []; // Will be loaded from URL hash or localStorage
         let customText = JSON.parse(localStorage.getItem('loveText') || '{}');
+
+        // Check if mobile
+        const isMobile = window.matchMedia('(max-width: 1024px)').matches;
 
         /* ============================================
            INITIALIZATION
@@ -1292,15 +1242,20 @@
         document.addEventListener('DOMContentLoaded', () => {
             initFloatingHearts();
             initTimer();
-            loadPhotos();
+            initYourPhotos();
             initLetters();
             initReasons();
             initGifts();
-            loadNotes();
+            loadNotesFromHash(); // Load notes from URL for sharing
             applyCustomText();
             
             // Update timer every minute
             setInterval(updateTimer, 60000);
+
+            // Hide edit button on mobile
+            if (isMobile) {
+                document.getElementById('editToggle').style.display = 'none';
+            }
         });
 
         /* ============================================
@@ -1350,9 +1305,35 @@
         }
 
         /* ============================================
-           EDIT MODE
+           YOUR PHOTOS - PRE-LOADED
+           ============================================ */
+        function initYourPhotos() {
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = ''; // Clear any existing
+            
+            YOUR_PHOTOS.forEach((photo, index) => {
+                const div = document.createElement('div');
+                div.className = 'gallery-item fade-in stagger-' + ((index % 3) + 1);
+                div.innerHTML = `
+                    <img src="${photo.src}" alt="Memory ${index + 1}" class="gallery-img" loading="lazy">
+                    <div class="gallery-overlay">
+                        <div class="gallery-caption editable" data-key="photoCaption${index}">${photo.caption}</div>
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        /* ============================================
+           EDIT MODE - DESKTOP ONLY
            ============================================ */
         function toggleEditMode() {
+            // Prevent edit mode on mobile
+            if (isMobile) {
+                alert('Editing is only available on desktop. Please use a computer to edit the website.');
+                return;
+            }
+
             editMode = !editMode;
             document.body.classList.toggle('edit-mode', editMode);
             
@@ -1415,141 +1396,7 @@
         }
 
         /* ============================================
-           PHOTO GALLERY WITH UPLOAD
-           ============================================ */
-        function initDragDrop() {
-            const uploadArea = document.getElementById('uploadArea');
-            
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, preventDefaults, false);
-            });
-
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-
-            ['dragenter', 'dragover'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, () => {
-                    uploadArea.classList.add('dragover');
-                }, false);
-            });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, () => {
-                    uploadArea.classList.remove('dragover');
-                }, false);
-            });
-
-            uploadArea.addEventListener('drop', (e) => {
-                const dt = e.dataTransfer;
-                handleFiles(dt.files);
-            }, false);
-        }
-
-        // Initialize drag drop after DOM loaded
-        document.addEventListener('DOMContentLoaded', initDragDrop);
-
-        function handleFiles(files) {
-            Array.from(files).forEach(file => {
-                if (!file.type.startsWith('image/')) return;
-                
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const photo = {
-                        id: Date.now() + Math.random(),
-                        src: e.target.result,
-                        caption: 'Click to edit caption'
-                    };
-                    photos.push(photo);
-                    savePhotos();
-                    renderPhoto(photo);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function renderPhoto(photo) {
-            const grid = document.getElementById('galleryGrid');
-            const emptyState = document.getElementById('emptyState');
-            if (emptyState) emptyState.style.display = 'none';
-
-            const div = document.createElement('div');
-            div.className = 'gallery-item';
-            div.dataset.id = photo.id;
-            div.innerHTML = `
-                <button class="delete-photo" onclick="deletePhoto(${photo.id}, event)">🗑️</button>
-                <img src="${photo.src}" alt="Memory" class="gallery-img">
-                <div class="gallery-overlay">
-                    <div class="gallery-caption editable" data-key="caption-${photo.id}" onclick="editCaption(${photo.id})">${photo.caption}</div>
-                </div>
-            `;
-            
-            // If in edit mode, make caption editable
-            if (editMode) {
-                const caption = div.querySelector('.gallery-caption');
-                caption.contentEditable = true;
-            }
-            
-            grid.appendChild(div);
-        }
-
-        function editCaption(id) {
-            if (!editMode) return;
-            
-            const photo = photos.find(p => p.id === id);
-            if (!photo) return;
-            
-            const newCaption = prompt('Edit caption:', photo.caption);
-            if (newCaption !== null) {
-                photo.caption = newCaption;
-                savePhotos();
-                loadPhotos();
-            }
-        }
-
-        function deletePhoto(id, event) {
-            event.stopPropagation();
-            if (!confirm('Delete this photo?')) return;
-            
-            photos = photos.filter(p => p.id !== id);
-            savePhotos();
-            loadPhotos();
-        }
-
-        function savePhotos() {
-            localStorage.setItem('lovePhotos', JSON.stringify(photos));
-        }
-
-        function loadPhotos() {
-            const grid = document.getElementById('galleryGrid');
-            // Keep empty state element, remove only photo items
-            const items = grid.querySelectorAll('.gallery-item');
-            items.forEach(item => item.remove());
-            
-            if (photos.length === 0) {
-                const emptyState = document.getElementById('emptyState');
-                if (emptyState) {
-                    emptyState.style.display = 'block';
-                } else {
-                    grid.innerHTML = `
-                        <div class="empty-gallery" id="emptyState">
-                            <p>No photos yet 💕</p>
-                            <p>Upload your first memory above!</p>
-                        </div>
-                    `;
-                }
-                return;
-            }
-            
-            const emptyState = document.getElementById('emptyState');
-            if (emptyState) emptyState.style.display = 'none';
-            
-            photos.forEach(photo => renderPhoto(photo));
-        }
-
-        /* ============================================
-           SIDE NOTES PANEL
+           SIDE NOTES PANEL - SHAREABLE VIA URL
            ============================================ */
         function toggleNotes() {
             document.getElementById('notesPanel').classList.toggle('open');
@@ -1563,7 +1410,7 @@
                 color: 'note-pink'
             };
             notes.push(note);
-            saveNotes();
+            saveNotesToHash();
             renderNote(note);
         }
 
@@ -1592,7 +1439,7 @@
             const note = notes.find(n => n.id === id);
             if (note) {
                 note.text = text;
-                saveNotes();
+                saveNotesToHash();
             }
         }
 
@@ -1601,7 +1448,7 @@
             if (!note) return;
             
             note.color = color;
-            saveNotes();
+            saveNotesToHash();
             
             const div = document.querySelector(`.note[data-id="${id}"]`);
             div.className = `note ${color}`;
@@ -1610,17 +1457,53 @@
         function deleteNote(id) {
             if (!confirm('Delete this note?')) return;
             notes = notes.filter(n => n.id !== id);
-            saveNotes();
-            loadNotes();
+            saveNotesToHash();
+            loadNotesFromHash();
         }
 
-        function saveNotes() {
-            localStorage.setItem('loveNotes', JSON.stringify(notes));
+        // Save notes to URL hash for sharing
+        function saveNotesToHash() {
+            // Compress notes for URL
+            const compressed = notes.map(n => ({
+                i: n.id,
+                t: n.text,
+                c: n.color.replace('note-', '')
+            }));
+            
+            const json = JSON.stringify(compressed);
+            const encoded = btoa(encodeURIComponent(json));
+            
+            // Update URL without reloading
+            window.location.hash = 'notes=' + encoded;
         }
 
-        function loadNotes() {
+        // Load notes from URL hash
+        function loadNotesFromHash() {
             const container = document.getElementById('notesContainer');
             container.innerHTML = '';
+            
+            // Try to load from URL hash first
+            const hash = window.location.hash;
+            if (hash && hash.includes('notes=')) {
+                try {
+                    const encoded = hash.split('notes=')[1];
+                    const json = decodeURIComponent(atob(encoded));
+                    const compressed = JSON.parse(json);
+                    
+                    notes = compressed.map(n => ({
+                        id: n.i,
+                        text: n.t,
+                        color: 'note-' + n.c
+                    }));
+                } catch (e) {
+                    console.log('Failed to load notes from URL');
+                    notes = [];
+                }
+            } else {
+                // Try localStorage as fallback
+                notes = JSON.parse(localStorage.getItem('loveNotes') || '[]');
+            }
+            
             notes.forEach(note => renderNote(note));
         }
 
